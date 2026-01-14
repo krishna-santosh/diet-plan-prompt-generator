@@ -1,20 +1,14 @@
 export const initialState = {
   profile: {
-    age: "",
-    gender: "",
-    height: "",
-    activityLevel: "",
-    mealsPerDay: "",
-    budget: "",
-  },
-  goal: "",
-  foodPreferences: {},
-  habits: {
-    smoking: "",
-    alcohol: "",
-    sleep: "",
-    stress: "",
-    cookingTime: "",
-    spiceTolerance: "",
-  },
+  age: "",
+  gender: "",
+  height: "",
+  heightUnit: "cm",
+  weight: "",
+  weightUnit: "kg",
+  trainingType: "",
+  activityLevel: "",
+  mealsPerDay: "",
+  budget: "",
+}
 }

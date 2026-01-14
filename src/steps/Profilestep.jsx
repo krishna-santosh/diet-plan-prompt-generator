@@ -14,38 +14,50 @@ export default function ProfileStep({ appState, setAppState }) {
   const inputClass =
     "w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10 transition"
 
-  // --- Height helpers ---
-  const MIN_CM = 50
-  const MAX_CM = 275
+  /* ---------------- HEIGHT ---------------- */
+  const MIN_HEIGHT_CM = 50
+  const MAX_HEIGHT_CM = 275
+  const heightUnit = profile.heightUnit || "cm"
 
-  function toCm(value, unit) {
-    if (unit === "cm") return value
-    if (unit === "m") return value * 100
-    if (unit === "in") return value * 2.54
-    return value
-  }
-
-  function fromCm(cm, unit) {
+  function heightFromCm(cm, unit) {
     if (unit === "cm") return cm
     if (unit === "m") return +(cm / 100).toFixed(2)
     if (unit === "in") return Math.round(cm / 2.54)
     return cm
   }
 
-  function getHeightOptions(unit) {
-    const options = []
-    for (let cm = MIN_CM; cm <= MAX_CM; cm++) {
-      const displayValue = fromCm(cm, unit)
-      options.push({
+  const heightOptions = Array.from(
+    { length: MAX_HEIGHT_CM - MIN_HEIGHT_CM + 1 },
+    (_, i) => {
+      const cm = i + MIN_HEIGHT_CM
+      return {
         cm,
-        displayValue,
-      })
+        display: heightFromCm(cm, heightUnit),
+      }
     }
-    return options
+  )
+
+  /* ---------------- WEIGHT ---------------- */
+  const MIN_WEIGHT_KG = 30
+  const MAX_WEIGHT_KG = 250
+  const weightUnit = profile.weightUnit || "kg"
+
+  function weightFromKg(kg, unit) {
+    if (unit === "kg") return kg
+    if (unit === "lb") return Math.round(kg * 2.20462)
+    return kg
   }
 
-  const heightUnit = profile.heightUnit || "cm"
-  const heightOptions = getHeightOptions(heightUnit)
+  const weightOptions = Array.from(
+    { length: MAX_WEIGHT_KG - MIN_WEIGHT_KG + 1 },
+    (_, i) => {
+      const kg = i + MIN_WEIGHT_KG
+      return {
+        kg,
+        display: weightFromKg(kg, weightUnit),
+      }
+    }
+  )
 
   return (
     <div className="rounded-xl border border-gray-200 p-6 bg-white">
@@ -55,9 +67,7 @@ export default function ProfileStep({ appState, setAppState }) {
 
         {/* Age */}
         <div>
-          <label className="block text-sm text-gray-600 mb-1">
-            Age
-          </label>
+          <label className="block text-sm text-gray-600 mb-1">Age</label>
           <select
             value={profile.age}
             onChange={e => updateProfile("age", e.target.value)}
@@ -74,9 +84,7 @@ export default function ProfileStep({ appState, setAppState }) {
 
         {/* Gender */}
         <div>
-          <label className="block text-sm text-gray-600 mb-1">
-            Gender
-          </label>
+          <label className="block text-sm text-gray-600 mb-1">Gender</label>
           <select
             value={profile.gender}
             onChange={e => updateProfile("gender", e.target.value)}
@@ -90,50 +98,96 @@ export default function ProfileStep({ appState, setAppState }) {
         </div>
 
         {/* Height */}
-        {/* Height */}
-<div>
-  <label className="block text-sm text-gray-600 mb-1">
-    Height
-  </label>
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">Height</label>
 
-  {/* Unit radios */}
-  <div className="flex gap-4 mb-2">
-    {["cm", "m", "in"].map(unit => (
-      <label
-        key={unit}
-        className="flex items-center gap-1 text-sm text-gray-700 cursor-pointer"
-      >
-        <input
-          type="radio"
-          name="heightUnit"
-          value={unit}
-          checked={heightUnit === unit}
-          onChange={() => updateProfile("heightUnit", unit)}
-        />
-        {unit === "in" ? "inches" : unit}
-      </label>
-    ))}
-  </div>
+          <div className="flex gap-4 mb-2">
+            {["cm", "m", "in"].map(unit => (
+              <label key={unit} className="flex items-center gap-1 text-sm">
+                <input
+                  type="radio"
+                  name="heightUnit"
+                  checked={heightUnit === unit}
+                  onChange={() => updateProfile("heightUnit", unit)}
+                />
+                {unit === "in" ? "inches" : unit}
+              </label>
+            ))}
+          </div>
 
-  {/* Height selector */}
-  <select
-    value={profile.height || ""}
-    onChange={e => updateProfile("height", Number(e.target.value))}
-    className={inputClass}
-  >
-    <option value="">Select height</option>
-    {heightOptions.map(opt => (
-      <option key={opt.cm} value={opt.cm}>
-        {opt.displayValue} {heightUnit}
-      </option>
-    ))}
-  </select>
+          <select
+            value={profile.height || ""}
+            onChange={e => updateProfile("height", Number(e.target.value))}
+            className={inputClass}
+          >
+            <option value="">Select height</option>
+            {heightOptions.map(h => (
+              <option key={h.cm} value={h.cm}>
+                {h.display} {heightUnit}
+              </option>
+            ))}
+          </select>
+        </div>
 
-  <p className="mt-1 text-xs text-gray-500">
-    Valid range: 50 cm – 275 cm (auto-adjusts by unit)
-  </p>
-</div>
+        {/* Weight */}
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">
+            Current Body Weight
+          </label>
 
+          <div className="flex gap-4 mb-2">
+            {["kg", "lb"].map(unit => (
+              <label key={unit} className="flex items-center gap-1 text-sm">
+                <input
+                  type="radio"
+                  name="weightUnit"
+                  checked={weightUnit === unit}
+                  onChange={() => updateProfile("weightUnit", unit)}
+                />
+                {unit}
+              </label>
+            ))}
+          </div>
+
+          <select
+            value={profile.weight || ""}
+            onChange={e => updateProfile("weight", Number(e.target.value))}
+            className={inputClass}
+          >
+            <option value="">Select weight</option>
+            {weightOptions.map(w => (
+              <option key={w.kg} value={w.kg}>
+                {w.display} {weightUnit}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Training Type */}
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">
+            Primary Training Type
+          </label>
+          <select
+            value={profile.trainingType}
+            onChange={e => updateProfile("trainingType", e.target.value)}
+            className={inputClass}
+          >
+            <option value="">Select training type</option>
+            <option value="Strength training">
+              Strength training (weights / resistance)
+            </option>
+            <option value="Cardio focused">
+              Cardio focused (running, cycling, sports)
+            </option>
+            <option value="Mixed">
+              Mixed (weights + cardio)
+            </option>
+            <option value="Not training">
+              Not training currently
+            </option>
+          </select>
+        </div>
 
         {/* Activity Level */}
         <div>
@@ -149,22 +203,20 @@ export default function ProfileStep({ appState, setAppState }) {
           >
             <option value="">Select activity level</option>
             <option value="Sedentary">Sedentary</option>
-            <option value="Light">Light (gym 2–3x/week)</option>
-            <option value="Moderate">Moderate (gym 4–5x/week)</option>
-            <option value="High">High (physically active)</option>
+            <option value="Light">Light</option>
+            <option value="Moderate">Moderate</option>
+            <option value="High">High</option>
           </select>
         </div>
 
-        {/* Meals per day */}
+        {/* Meals */}
         <div>
           <label className="block text-sm text-gray-600 mb-1">
             Meals per day
           </label>
           <select
             value={profile.mealsPerDay}
-            onChange={e =>
-              updateProfile("mealsPerDay", e.target.value)
-            }
+            onChange={e => updateProfile("mealsPerDay", e.target.value)}
             className={inputClass}
           >
             <option value="">Select meals per day</option>
