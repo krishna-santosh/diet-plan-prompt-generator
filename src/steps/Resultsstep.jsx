@@ -6,7 +6,8 @@ export default function ResultStep({ appState }) {
   const [acknowledged, setAcknowledged] = useState(false)
 
   useEffect(() => {
-    setPrompt(generatePrompt(appState))
+    const generated = generatePrompt(appState)
+    setPrompt(generated)
   }, [appState])
 
   function copyToClipboard() {
@@ -15,31 +16,31 @@ export default function ResultStep({ appState }) {
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 p-6 bg-white overflow-y-auto">
+    <div className="rounded-xl border border-gray-200 p-4 bg-white">
       <h2 className="text-xl font-semibold">
         Generated Prompt
       </h2>
 
       {/* Disclaimer */}
-      <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+      <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
         ⚠️ This generates a sample diet prompt only.  
-        Not medical advice. Do not blindly follow outputs.
+        This is NOT medical advice. Do not blindly follow it.
       </div>
 
-      {/* Prompt */}
-      <textarea
+      {/* PROMPT DISPLAY — ANDROID SAFE */}
+      <div
         className="
-          mt-6 w-full min-h-[60vh]
+          mt-4 max-h-[70vh] overflow-y-auto
           rounded-lg border border-gray-300 bg-gray-50
-          p-4 text-sm leading-relaxed font-mono text-gray-800
-          focus:outline-none focus:ring-2 focus:ring-black/10
+          p-4 text-sm text-gray-800
+          font-mono whitespace-pre-wrap
         "
-        value={prompt}
-        readOnly
-      />
+      >
+        {prompt || "Generating prompt..."}
+      </div>
 
       {/* Acknowledgement */}
-      <div className="mt-4 flex items-center gap-2">
+      <div className="mt-4 flex items-start gap-2">
         <input
           type="checkbox"
           checked={acknowledged}
@@ -50,7 +51,7 @@ export default function ResultStep({ appState }) {
         </span>
       </div>
 
-      {/* Copy button */}
+      {/* Copy */}
       <button
         onClick={copyToClipboard}
         disabled={!acknowledged}
