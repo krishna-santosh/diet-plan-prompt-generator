@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Wizard from "./components/WIzard";
 import ProgressBar from "./components/Progressbar";
 
@@ -19,14 +19,17 @@ export default function App() {
     initialState,
   );
 
-  const steps = [
-    IntroStep,
-    ProfileStep,
-    GoalStep,
-    FoodStep,
-    HabitsStep,
-    ResultStep,
-  ];
+  const steps = useMemo(
+    () => [
+      () => <IntroStep appState={appState} setAppState={setAppState} />,
+      () => <ProfileStep appState={appState} setAppState={setAppState} />,
+      () => <GoalStep appState={appState} setAppState={setAppState} />,
+      () => <FoodStep appState={appState} setAppState={setAppState} />,
+      () => <HabitsStep appState={appState} setAppState={setAppState} />,
+      () => <ResultStep appState={appState} setAppState={setAppState} />,
+    ],
+    [appState, setAppState]
+  );
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -43,10 +46,8 @@ export default function App() {
         </div>
 
         <div className="mt-8 animate-fade">
-          <Wizard
-            steps={steps.map((Step) => () => (
-              <Step appState={appState} setAppState={setAppState} />
-            ))}
+           <Wizard
+            steps={steps}
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
           />
