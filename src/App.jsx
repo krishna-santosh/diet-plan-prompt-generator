@@ -28,7 +28,7 @@ export default function App() {
 
   const steps = useMemo(
     () => [
-      () => <IntroStep appState={appState} setAppState={setAppState} />,
+      () => <IntroStep onReset={handleReset} />,
       () => <ProfileStep appState={appState} setAppState={setAppState} />,
       () => <GoalStep appState={appState} setAppState={setAppState} />,
       () => <FoodStep appState={appState} setAppState={setAppState} />,
